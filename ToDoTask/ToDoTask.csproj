@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ServiceStack" Version="5.*" />
+    <PackageReference Include="ServiceStack.Mvc.Core" Version="5.13.3" />
+    <PackageReference Include="ServiceStack.OrmLite.PostgreSQL" Version="5.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ToDoTask.ServiceInterface\ToDoTask.ServiceInterface.csproj" />
+    <ProjectReference Include="..\ToDoTask.ServiceModel\ToDoTask.ServiceModel.csproj" />
+  </ItemGroup>
+
+</Project>

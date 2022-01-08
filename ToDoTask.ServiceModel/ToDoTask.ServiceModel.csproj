@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ServiceStack.Interfaces" Version="5.*" />
+    <PackageReference Include="ServiceStack.Mvc.Core" Version="5.13.3" />
+    <PackageReference Include="ServiceStack.OrmLite.PostgreSQL" Version="5.13.3" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <DebugType>portable</DebugType>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ToDoTask.ServiceInterface\ToDoTask.ServiceInterface.csproj" />
+    <ProjectReference Include="..\ToDoTask.ServiceModel\ToDoTask.ServiceModel.csproj" />
+
+    <PackageReference Include="NUnit" Version="3.13.*" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.1.*" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.*" />
+    <PackageReference Include="ServiceStack" Version="5.*" />
+    <PackageReference Include="ServiceStack.Kestrel" Version="5.*" />
+    <PackageReference Include="ServiceStack.Mvc.Core" Version="5.13.3" />
+    <PackageReference Include="ServiceStack.OrmLite.PostgreSQL" Version="5.13.3" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+  </ItemGroup>
+
+</Project>
