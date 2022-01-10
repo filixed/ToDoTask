@@ -1,21 +1,20 @@
 ﻿using ServiceStack;
-
 using ToDoTask.ServiceModel.Requests.ToDoRequests;
 using ToDoTask.ServiceModel.Responses.ToDoResponses;
-using ToDoTask.ServiceModel.Types;
-using ServiceStack.Data;
-using ServiceStack.OrmLite;
+using ToDoTask.ServiceModel.Repository;
+
 
 namespace ToDoTask.ServiceInterface
 {
     public class ToDoServices : Service
     {
+        public IToDoRepository ToDoRepository { get; set; }
         // /addtodo 
         public ToDoCreateResponse Post(ToDoCreateRequest request)
         {
-            var todo = new ToDo { TimeOfExpiry = request.TimeOfExpiry,
-                Title = request.Title, Description = request.Description, Complete = request.Complete };
-            Db.Save(todo);
+            
+            var todo = ToDoRepository.CreateTodo(request);
+            ToDoRepository.Insert(todo);
             return new ToDoCreateResponse
             {
                 Result = todo
@@ -24,19 +23,25 @@ namespace ToDoTask.ServiceInterface
         // /gettodos
         public ToDoGetAllResponse Get(ToDoGetAllRequest request)
         {
-
             return new ToDoGetAllResponse
             {
-                Results = Db.Select<ToDo>()
+                Results = ToDoRepository.GetAll()
             };
         }
+        //public async Task<ToDoGetAllResponse> Geta(ToDoGetAllRequest request)
+        //{
+        //    return new ToDoGetAllResponse
+        //    {
+        //        Results = await ToDoRepository.GetAllAsync()
+        //    };
+        //}
+
         // /getone/{Id}
         public ToDoGetOneResponse Get(ToDoGetOneRequest request)
         {
-            var todo = Db.SingleById<ToDo>(request.Id);
+            var todo = ToDoRepository.GetById(request.Id);
             if (todo == null)
                 throw HttpError.NotFound("ToDo not found");
-
 
             return new ToDoGetOneResponse
             {
@@ -46,7 +51,7 @@ namespace ToDoTask.ServiceInterface
         // /updtodoe/{Id}
         public ToDoUpdateResponse Put(ToDoUpdateRequest request)
         {
-            var todo = Db.SingleById<ToDo>(request.Id);
+            var todo = ToDoRepository.GetById(request.Id);
             if (todo == null)
                 throw HttpError.NotFound("ToDo not found");
 
@@ -55,7 +60,7 @@ namespace ToDoTask.ServiceInterface
             todo.Description = request.Description;
             todo.Complete = request.Complete;
 
-            Db.Update(todo);
+            ToDoRepository.Update(todo);
 
             return new ToDoUpdateResponse
             {
@@ -67,36 +72,23 @@ namespace ToDoTask.ServiceInterface
 
         public ToDoGetSpecificResponse Get(ToDoGetSpecificRequest request)
         {
-            switch (request.IncomingFor)
-            {
-                case "day":
-                    return new ToDoGetSpecificResponse
-                    {
-                        Results = Db.Select<ToDo>("SELECT * FROM to_do WHERE " +
-                        "time_of_expiry <= (SELECT CURRENT_TIMESTAMP + '1 day'::interval);")
-                    };
-                case "week":
-                    return new ToDoGetSpecificResponse
-                    {
-                        Results = Db.Select<ToDo>("SELECT * FROM to_do WHERE " +
-                        "time_of_expiry <= (SELECT CURRENT_TIMESTAMP + '7 day'::interval);")
 
-                    };
-                default:
-                    throw HttpError.NotFound("ToDo not found");
-            }
+            return new ToDoGetSpecificResponse
+            {
+                Results = ToDoRepository.GetIncoming(request)
+            };
         }
 
         // /updpercent/{Id}
 
         public ToDoUpdatePercentResponse Put(ToDoUpdatePercentRequest request)
         {
-            var todo = Db.SingleById<ToDo>(request.Id);
+            var todo = ToDoRepository.GetById(request.Id);
             if (todo == null)
                 throw HttpError.NotFound("ToDo not found");
 
             todo.Complete = request.Complete;
-            Db.Update(todo);
+            ToDoRepository.Update(todo);
 
             return new ToDoUpdatePercentResponse
             {
@@ -108,9 +100,12 @@ namespace ToDoTask.ServiceInterface
 
         public ToDoDeleteResponse Delete(ToDoDeleteRequest request)
         {
-            var todo = Db.SingleById<ToDo>(request.Id);
+            var todo = ToDoRepository.GetById(request.Id);
             if (todo == null)
                 throw HttpError.NotFound("ToDo not found");
+
+            ToDoRepository.Delete(request.Id);
+
             return new ToDoDeleteResponse
             {
                 Result = ("Id " + todo.Id + " was deleted")
@@ -120,13 +115,14 @@ namespace ToDoTask.ServiceInterface
         // /setdone/{Id}
 
         public ToDoSetDoneResponse Put(ToDoSetDoneRequest request) 
-        { 
-            var todo = Db.SingleById<ToDo>(request.Id);
+        {
+            var todo = ToDoRepository.GetById(request.Id);
             if (todo == null)
                 throw HttpError.NotFound("ToDo not found");
 
             todo.isDone = true;
-            Db.Update(todo);
+
+            ToDoRepository.Update(todo);
 
             return new ToDoSetDoneResponse
             {

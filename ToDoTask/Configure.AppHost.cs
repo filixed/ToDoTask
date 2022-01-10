@@ -1,7 +1,9 @@
 using Funq;
 using ServiceStack;
 using ServiceStack.FluentValidation;
+using System.Data;
 using ToDoTask.ServiceInterface;
+using ToDoTask.ServiceModel.Repository;
 using ToDoTask.ServiceModel.Requests.ToDoRequests;
 using ToDoTask.ServiceModel.Types;
 using ToDoTask.ServiceModel.Validators;
@@ -12,6 +14,7 @@ namespace ToDoTask;
 
 public class AppHost : AppHostBase, IHostingStartup
 {
+
     public void Configure(IWebHostBuilder builder) => builder
         .ConfigureServices(services => {
             // Configure ASP.NET Core IOC Dependencies
@@ -35,6 +38,12 @@ public class AppHost : AppHostBase, IHostingStartup
         container.Register<IValidator<ToDoGetOneRequest>>(new ToDoGetOneValidator());
         container.Register<IValidator<ToDoUpdateRequest>>(new ToDoUpdateValidator());
         container.Register<IValidator<ToDoUpdatePercentRequest>>(new ToDoUpdatePercentValidator());
-
+        container.RegisterAs<ToDoRepository, IToDoRepository>();
+        container.Register<IToDoRepository>(c =>
+        {
+            var repository = new ToDoRepository();
+            c.AutoWire(repository);
+            return repository;
+        });
     }
 }

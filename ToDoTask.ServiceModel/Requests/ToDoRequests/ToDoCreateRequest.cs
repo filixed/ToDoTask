@@ -16,5 +16,9 @@ namespace ToDoTask.ServiceModel.Requests.ToDoRequests
         public string Description { get; set; }
         public int Complete { get; set; }
         public bool isDone { get; set; }
+
+        
     }
+
+   
 }

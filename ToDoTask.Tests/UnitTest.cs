@@ -54,7 +54,7 @@ public class UnitTest
     {
         var service = appHost.Container.Resolve<ToDoServices>();
 
-        ToDoGetAllResponse response = (ToDoGetAllResponse)service.Get(new ToDoGetAllRequest() );
+        ToDoGetAllResponse response = (ToDoGetAllResponse)service.GetAsync(new ToDoGetAllRequest() );
 
         Assert.AreEqual(3, response.Results.Count);
     }
